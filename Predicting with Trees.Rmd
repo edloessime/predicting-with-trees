@@ -1,0 +1,65 @@
+---
+title: "Predicting with Trees, Random Forests and Predictive Models"
+author: "Ed Loessi"
+date: "May 12, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("caret")
+rm(list = ls())
+```
+
+## Example Iris Data
+
+```{r}
+data(iris); library(ggplot2)
+names(iris)
+table(iris$Species)
+```
+
+## Create training and test sets
+
+```{r}
+inTrain <- createDataPartition(y=iris$Species, p=0.7, list=FALSE)
+training <- iris[inTrain,]
+testing <- iris[-inTrain,]
+dim(training); dim(testing)
+```
+
+
+## ris petal widths/sepal width
+
+```{r}
+qplot(Petal.Width,Sepal.Width,colour=Species,data=training)
+```
+
+## Iris petal widths/sepal width
+
+```{r}
+library(caret)
+modFit <- train(Species ~ .,method="rpart",data=training)
+print(modFit$finalModel)
+```
+
+## Plot tree
+
+```{r}
+plot(modFit$finalModel, uniform=TRUE, 
+      main="Classification Tree")
+text(modFit$finalModel, use.n=TRUE, all=TRUE, cex=.8)
+```
+
+## Prettier plots
+
+```{r}
+library(rattle)
+fancyRpartPlot(modFit$finalModel)
+```
+
+## Predicting new values
+
+```{r}
+predict(modFit,newdata=testing)
+```
